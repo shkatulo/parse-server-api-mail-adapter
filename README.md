@@ -39,6 +39,7 @@ The Parse Server API Mail Adapter enables Parse Server to send emails using any 
 - [Supported APIs](#supported-apis)
   - [Providers](#providers)
     - [Example for Mailgun](#example-for-mailgun)
+    - [Example for AWS Simple Email Service](#example-for-aws-simple-email-service)
   - [Custom API](#custom-api)
 - [Need help?](#need-help)
 
