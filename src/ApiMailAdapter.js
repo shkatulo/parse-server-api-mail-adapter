@@ -356,7 +356,7 @@ class ApiMailAdapter extends MailAdapter {
    * @returns {String} The template with filled in placeholders.
    */
   _fillPlaceholders(template, placeholders, partials) {
-    return Mustache.render(template, placeholder, partials)
+    return Mustache.render(template, placeholders, partials)
   }
 
   /**
