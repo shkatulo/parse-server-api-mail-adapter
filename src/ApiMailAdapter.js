@@ -258,7 +258,7 @@ class ApiMailAdapter extends MailAdapter {
       partials = entries.reduce(
         (prev, current, index) => ({
           ...prev,
-          [current[0]]: results[index],
+          [current[0]]: results[index].toString('utf8'),
         }),
         {},
       );
@@ -386,7 +386,7 @@ class ApiMailAdapter extends MailAdapter {
     }
 
     // Validate partials
-    if (partials && typeof partials !== 'object') {
+    if (partials !== undefined && typeof partials !== 'object') {
       throw Errors.Error.partialsNotObject;
     }
   }
