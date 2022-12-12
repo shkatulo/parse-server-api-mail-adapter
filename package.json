@@ -62,7 +62,7 @@
     "madge": "node_modules/.bin/madge ./src $npm_config_arg",
     "madge:circular": "npm run madge --arg=--circular",
     "test": "echo 'Skip test'",
-    "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
+    "_posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
     "prepare": "npm run build && npm test",
     "demo": "node ./demo"
   }
