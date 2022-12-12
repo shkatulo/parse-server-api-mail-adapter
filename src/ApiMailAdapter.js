@@ -250,6 +250,20 @@ class ApiMailAdapter extends MailAdapter {
     // Get subject content
     const subject = message.subject || await this._loadFile(template.subjectPath, locale);
 
+    // Get partials
+    let partials;
+    if (template.partials) {
+      const entries = Object.entries(template.partials);
+      const results = await Promise.all(entries.map(e => this._loadFile(e[1], locale)));
+      partials = entries.reduce(
+        (prev, current, index) => ({
+          ...prev,
+          [current[0]]: results[index],
+        }),
+        {},
+      );
+    }
+
     // If subject is available
     if (subject) {
 
@@ -257,7 +271,7 @@ class ApiMailAdapter extends MailAdapter {
       message.subject = subject.toString('utf8');
 
       // Fill placeholders in subject
-      message.subject = this._fillPlaceholders(message.subject, placeholders);
+      message.subject = this._fillPlaceholders(message.subject, placeholders, partials);
     }
 
     // Get text content
@@ -270,7 +284,7 @@ class ApiMailAdapter extends MailAdapter {
       message.text = text.toString('utf8');
 
       // Fill placeholders in text
-      message.text = this._fillPlaceholders(message.text, placeholders);
+      message.text = this._fillPlaceholders(message.text, placeholders, partials);
     }
 
     // Get HTML content
@@ -283,7 +297,7 @@ class ApiMailAdapter extends MailAdapter {
       message.html = html.toString('utf8');
 
       // Fill placeholders in HTML
-      message.html = this._fillPlaceholders(message.html, placeholders);
+      message.html = this._fillPlaceholders(message.html, placeholders, partials);
     }
 
     // Append any additional message properties;
@@ -341,8 +355,8 @@ class ApiMailAdapter extends MailAdapter {
    * @param {Object} placeholders A map of placeholder keys with values.
    * @returns {String} The template with filled in placeholders.
    */
-  _fillPlaceholders(template, placeholders) {
-    return Mustache.render(template, placeholders)
+  _fillPlaceholders(template, placeholders, partials) {
+    return Mustache.render(template, placeholder, partials)
   }
 
   /**
