@@ -354,7 +354,7 @@ class ApiMailAdapter extends MailAdapter {
   _validateTemplate(template) {
 
     // Get template properties
-    const { subjectPath, textPath, htmlPath, placeholderCallback, localeCallback } = template;
+    const { subjectPath, textPath, htmlPath, placeholderCallback, localeCallback, partials } = template;
 
     // Validate paths
     if (typeof subjectPath !== 'string' || typeof textPath !== 'string' || (htmlPath && typeof htmlPath !== 'string')) {
@@ -369,6 +369,11 @@ class ApiMailAdapter extends MailAdapter {
     // Validate locale callback
     if (localeCallback && typeof localeCallback !== 'function') {
       throw Errors.Error.localeCallbackNoFunction;
+    }
+
+    // Validate partials
+    if (partials && typeof partials !== 'object') {
+      throw Errors.Error.partialsNotObject;
     }
   }
 

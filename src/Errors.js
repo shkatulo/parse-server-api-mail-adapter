@@ -19,6 +19,7 @@ class Errors extends Error {
       apiCallbackNoFunction: new Error('ApiMailAdapter: API callback is not a function.'),
       templateCallbackNoFunction: new Error('ApiMailAdapter: placeholder callback is not a function.'),
       localeCallbackNoFunction: new Error('ApiMailAdapter: locale callback is not a function.'),
+      partialsNotObject: new Error('ApiMailAdapter: partials is not an object.'),
       templateConfigurationNoName: new Error('ApiMailAdapter: template name is missing.'),
       noRecipient: new Error('ApiMailAdapter: recipient is missing.'),
       noTemplateWithName: (templateName) => new Error(`ApiMailAdapter: No template found with name '${templateName}'.`)
