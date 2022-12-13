@@ -256,12 +256,19 @@ class ApiMailAdapter extends MailAdapter {
       const entries = Object.entries(template.partials);
       const results = await Promise.all(entries.map(e => this._loadFile(e[1], locale)));
       partials = entries.reduce(
-        (prev, current, index) => ({
-          ...prev,
-          [current[0]]: results[index].toString('utf8'),
-        }),
+        (prev, current, index) => {
+          prev[current[0]] = results[index].toString('utf8');
+          return prev;
+        },
         {},
       );
+    }
+
+    const partialsFunction = (partialName) => {
+      const partial = partials?.[partialName];
+      if (partial) return partial;
+
+      return template.partialsCallback?.(partialName);
     }
 
     // If subject is available
@@ -271,7 +278,7 @@ class ApiMailAdapter extends MailAdapter {
       message.subject = subject.toString('utf8');
 
       // Fill placeholders in subject
-      message.subject = this._fillPlaceholders(message.subject, placeholders, partials);
+      message.subject = this._fillPlaceholders(message.subject, placeholders, partialsFunction);
     }
 
     // Get text content
@@ -284,7 +291,7 @@ class ApiMailAdapter extends MailAdapter {
       message.text = text.toString('utf8');
 
       // Fill placeholders in text
-      message.text = this._fillPlaceholders(message.text, placeholders, partials);
+      message.text = this._fillPlaceholders(message.text, placeholders, partialsFunction);
     }
 
     // Get HTML content
@@ -297,7 +304,7 @@ class ApiMailAdapter extends MailAdapter {
       message.html = html.toString('utf8');
 
       // Fill placeholders in HTML
-      message.html = this._fillPlaceholders(message.html, placeholders, partials);
+      message.html = this._fillPlaceholders(message.html, placeholders, partialsFunction);
     }
 
     // Append any additional message properties;
@@ -353,6 +360,7 @@ class ApiMailAdapter extends MailAdapter {
    * @description Substitutes placeholders in a template with their values.
    * @param {String} template The template with placeholders, e.g. {{placeholder}}.
    * @param {Object} placeholders A map of placeholder keys with values.
+   * @param {Object | (partialName: String) => String} partials A map of partial keys with values or function to resolve partials.
    * @returns {String} The template with filled in placeholders.
    */
   _fillPlaceholders(template, placeholders, partials) {
@@ -368,7 +376,7 @@ class ApiMailAdapter extends MailAdapter {
   _validateTemplate(template) {
 
     // Get template properties
-    const { subjectPath, textPath, htmlPath, placeholderCallback, localeCallback, partials } = template;
+    const { subjectPath, textPath, htmlPath, placeholderCallback, localeCallback, partials, partialsCallback } = template;
 
     // Validate paths
     if (typeof subjectPath !== 'string' || typeof textPath !== 'string' || (htmlPath && typeof htmlPath !== 'string')) {
@@ -386,8 +394,13 @@ class ApiMailAdapter extends MailAdapter {
     }
 
     // Validate partials
-    if (partials !== undefined && typeof partials !== 'object') {
+    if (partials !== undefined && (typeof partials !== 'object' || Object.values(partials).some(v => typeof v !== 'string'))) {
       throw Errors.Error.partialsNotObject;
+    }
+
+    // Validate partials callback
+    if (partialsCallback !== undefined && typeof partialsCallback !== 'function') {
+      throw Errors.Error.partialsCallbackNotFunction;
     }
   }
 
