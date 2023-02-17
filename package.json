@@ -63,8 +63,8 @@
     "madge:circular": "npm run madge --arg=--circular",
     "test": "echo 'Skip test'",
     "_posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
-    "prepare": "npm run build && npm test",
-    "prepack": "npm run build && npm test",
+    "prepare": "npm run build",
+    "prepack": "yarn run build",
     "demo": "node ./demo"
   }
 }
