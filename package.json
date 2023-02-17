@@ -64,6 +64,7 @@
     "test": "echo 'Skip test'",
     "_posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
     "prepare": "npm run build && npm test",
+    "prepack": "npm run build && npm test",
     "demo": "node ./demo"
   }
 }
